@@ -1,0 +1,12 @@
+table {
+border: 2px solid black;
+border-radius: 10px;
+}
+input {
+  border-radius: 5px;
+}
+.ok {
+  border-radius: 5px;
+  border: 1px solid black;
+  margin-left: 10px;
+}
