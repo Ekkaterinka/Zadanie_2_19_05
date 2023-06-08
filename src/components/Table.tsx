@@ -1,50 +1,48 @@
 import { useState } from 'react'
 import uuid from 'react-uuid';
 
-interface Tab {
+
+interface Exercise {
+  id: string;
   data: string;
   km: number;
 }
 
-const Tab = [{ id: uuid(), data: '', km: 0 }]
-
 export default function Table() {
   const [data, setData] = useState('');
   const [km, setKm] = useState(0);
-  const [Uchet, setUchet] = useState(Tab);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
 
-  const setNewUchet = (event: React.ChangeEvent<HTMLFormElement>) => {
+  const setNewUchet = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const newUchet = {
+    const newExercise = {
       data: data,
-      km: km,
-      id: uuid()
+      km
     };
-    const obj = Uchet.findIndex(n => n.data === newUchet.data);
-    const handleState = Uchet.map((x, i) => {
-      if (i === obj) {
-        return { ...x, km: x.km + newUchet.km };
-      }
-      else { return x; }
+    const index = exercises.findIndex(n => n.data === newExercise.data);
+    if (index === -1) {
+      setExercises(prevExercises => [...prevExercises, { id: uuid(), ...newExercise }]);
+    } else {
+      setExercises(prevExercises => {
+        const newExercises = [...prevExercises];
+        newExercises[index].km += newExercise.km;
+        return newExercises;
+      });
     }
-    )
-    if (obj <= 0) { return setUchet((prevUchet) => { return [...prevUchet, newUchet] }); }
-    else {
-      setUchet(handleState);
-    };
 
     setData('');
     setKm(0);
   }
-
-  const tableRows = Uchet.sort((a, b) => a.data > b.data ? 1 : -1).map((e) => {
+  console.log(exercises)
+  const tableRows = exercises.sort((a, b) => Number(a.data) - Number(b.data)).map((e) => {
     return (
       <tr key={e.id}>
+        {/* <td>{(new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit'}).format(e.data))}</td> */}
         <td>{e.data}</td>
         <td>{e.km}</td>
         <td><button onClick={() => {
-          setUchet(
-            Uchet.filter(a =>
+          setExercises(
+            exercises.filter(a =>
               a.data !== e.data
             )
           );
